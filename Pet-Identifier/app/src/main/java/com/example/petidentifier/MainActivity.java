@@ -90,15 +90,12 @@ public class MainActivity extends AppCompatActivity {
 
         loadImage.setOnClickListener(new View.OnClickListener() {
 
-
             public void onClick(View view){
 
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE);
                 startActivityForResult(intent, 3);
-
             }
-
         });
 
         classifyBtn.setOnClickListener(new View.OnClickListener() {
@@ -134,8 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
                 //Calling the forward of the model to run our input
                 final Tensor output = module.forward(IValue.from(input)).toTensor();
-
-
                 final float[] score_arr = output.getDataAsFloatArray();
 
                 // Fetch the index of the value with maximum score
@@ -152,10 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 String detected_class = com.example.petidentifier.ImageNetClasses.IMAGENET_CLASSES[ms_ix];
 
                 //Writing the detected class in to the text view of the layout
-
                 textView.setText(detected_class);
-
-
             }
         });
     }
@@ -166,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Toast.makeText(MainActivity.this, "Permission already Granted", Toast.LENGTH_SHORT);
         }
-
     }
 
     @Override
@@ -191,10 +182,7 @@ public class MainActivity extends AppCompatActivity {
             selectedImage = data.getData();
             ImageView imageView = findViewById(R.id.imageView);
             imageView.setImageURI(selectedImage);
-//ok
         }
-
-
     }
 
     
@@ -241,5 +229,4 @@ public class MainActivity extends AppCompatActivity {
             return file.getAbsolutePath();
         }
     }
-
 }
