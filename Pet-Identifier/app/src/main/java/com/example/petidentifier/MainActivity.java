@@ -184,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageURI(selectedImage);
         }
     }
-
     
     public HashMap<Integer, String> buildHashMapFromFile(){
         HashMap<Integer, String> map = new HashMap<>();
