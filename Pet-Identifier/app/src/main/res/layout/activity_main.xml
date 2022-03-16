@@ -12,13 +12,15 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-73dp" />
+        tools:layout_editor_absoluteY="-73dp"
+        />
 
     <Button
         android:id="@+id/loadImage"
         android:layout_width="154dp"
         android:layout_height="58dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="52dp"
+        android:backgroundTint="@color/material_dynamic_primary50"
         android:text="Load Image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,23 +31,25 @@
         android:id="@+id/classifyBtn"
         android:layout_width="154dp"
         android:layout_height="58dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="52dp"
+        android:backgroundTint="@color/material_dynamic_primary50"
         android:text="Identify Pet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.816"
-        app:layout_constraintStart_toEndOf="@+id/loadImage" />
+        app:layout_constraintStart_toEndOf="@+id/loadImage"
+        tools:ignore="TextContrastCheck,TextContrastCheck" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="225dp"
         android:layout_height="33dp"
-        android:layout_marginBottom="188dp"
+        android:layout_marginBottom="148dp"
+        android:gravity="center"
         android:text="TextView"
         android:textColor="#B52828"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
