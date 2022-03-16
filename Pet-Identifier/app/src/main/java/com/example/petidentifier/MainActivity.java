@@ -184,7 +184,11 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageURI(selectedImage);
         }
     }
+<<<<<<< Updated upstream
     
+=======
+
+>>>>>>> Stashed changes
     public HashMap<Integer, String> buildHashMapFromFile(){
         HashMap<Integer, String> map = new HashMap<>();
         BufferedReader objReader;
@@ -207,8 +211,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return map;
+<<<<<<< Updated upstream
     }	
 	
+=======
+    }
+>>>>>>> Stashed changes
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
