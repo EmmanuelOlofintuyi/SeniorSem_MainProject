@@ -10,7 +10,7 @@ import numpy as np
 #Attempting to create transformations, datasets, and loaders as dictionary entries that can be referenced
 
 #Approach involves downloading data from Google Drive. Drive data is put to content folder of Colab
-#Can be modified to alternatively take files from file.upload()
+#Can be modified to alternatively take files from file.upload(). Using Drive for testing.
 from google.colab import drive
 drive.mount('/content/gdrive')
 
