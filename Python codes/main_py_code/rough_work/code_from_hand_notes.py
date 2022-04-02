@@ -25,12 +25,12 @@ directories = {
 #Building a dictionary of transformations that will be applied to the data according to phase of processing
 transformations = {
     'training' : transforms.Compose([
-        transforms.CenterCrop(X,Y,Z),
+        transforms.CenterCrop(500),
         transforms.ToTensor(),
         transforms.Normalize([0.4363,0.4328,0.3291],[0.2132,0.2078,0.2040])
     ]),
     'validation' : transforms.Compose([
-        transforms.CenterCrop(X,Y,Z),
+        transforms.CenterCrop(500),
         transforms.ToTensor(),
         transforms.Normalize([0.4363,0.4328,0.3291],[0.2132,0.2078,0.2040])
     ])
