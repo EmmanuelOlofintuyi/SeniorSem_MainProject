@@ -52,11 +52,9 @@ datasets_PASCAL = {
 dataset_sizes = { x : len(datasets_PASCAL[x]) for x in ['training','validation']
 }
 
-#We're using PASCAL VOC dataset with PASCAL VOC Segmentation base class from torchvision.datasets
-#example_dataset = torchvision.datasets.VOCSegmentation(directory_location, transform=example_transformation)
-#Making a dictionary of dataloaders using keys of previous dicts.
+
+#Building a dictionary of dataloaders using keys of previous dicts.
+#NOTE: Uncertain of output if dataset_size is not divisible by batch_size (i.e.: when dataset_size % batch_size != 0)
 dataloaders = {
     x : torch.utils.data.DataLoader(datasets_PASCAL[x], batch_size=32, shuffle=True) for x in ['training','validation']
 }
-#NOTE: Uncertain of output if dataset_size is not divisible by batch_size
-#(i.e.: when dataset_size % batch_size != 0)
