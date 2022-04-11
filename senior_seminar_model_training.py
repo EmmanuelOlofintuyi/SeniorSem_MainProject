@@ -70,13 +70,15 @@ transformations = {
 }
 
 #Load datasets with the image folder 
-image_datasets = {x:datasets./content/gdrive/MyDrive/SeniorSeminar/VOC2012/(directories[x], transform=transformations[x]) for x in ['training','validation','test']}
+image_datasets = {x:datasets.VOCSegmentation(directories[x], transform=transformations[x]) for x in ['training','validation','test']}
+
 #Load the data into batches
 ## This might be incorrect dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32, shuffle=True) for x in ['training', 'validation', 'test']} 
-dataset_sizes = {x: len(image_datasets[x])
-                                      for x in ['training','validation', 'test']}
+dataset_sizes = {x: len(image_datasets[x]) for x in ['training','validation', 'test']}
+dataloaders = { x : torch.utils.data.DataLoader(image_datasets[x], batch_size=32, shuffle=True) for x in ['training', 'validation', 'test']}
+
                
-##torchvision.datasets.MNIST(root: str, train: bool = True, transform: Union[Callable, NoneType] = None, target_transform: Union[Callable, NoneType] = None, download: bool = False) → None
+##torchvision.datasets.MNIST(root: str, train: bool = True, transform: Union[Callable, NoneType] = None, target_transform: Union[Callable, NoneType] = None, download: bool = False) → NoneeType] = None, download: bool = False) → None
 
 from google.colab import drive
 drive.mount('/content/drive')
@@ -157,7 +159,6 @@ model.cuda()
                       ##epoch_loss = running_loss / dataset_sizes[phase]
                       ##epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-# Commented out IPython magic to ensure Python compatibility.
                   learning_rate = .0001
                   device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
                   model = MyModel()
@@ -179,18 +180,24 @@ model.cuda()
 
                     logits = model(images)
                     loss = criterion(logits, labels)
+
+                    #(-_-) 
+                    writer = SummaryWriter()
+                    writer.add_scalar("Loss/train", loss, epoch)
+
                     optimizer.zero_grad()
                     loss.backward()
-
-
                     optimizer.step()
- 
+
+                    writer.flush()
+
+                  #ALANDA is confused with this part. 
                   train_running_loss += loss.detach().item()
                   
 
                   ## model.eval()
                   print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
-#                   %(epoch, train_running_loss / i, train_acc/i))
+                  %(epoch, train_running_loss / i, train_acc/i))  
 
 #Saving the model
 model.class_to_idx = image_datasets['train'].class_to_idx
