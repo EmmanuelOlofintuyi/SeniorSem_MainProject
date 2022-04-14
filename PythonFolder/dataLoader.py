@@ -75,8 +75,8 @@ class dataLoader(data.Dataset):
         im = Image.open(im_path)
         lbl = np.array(Image.open(lbl_path))
         
-        lbl = self.tf(lbl)
-        self.lbl.tf = self.tf(lbl)
+        im = self.tf(im)
+        self.lbl_tf = self.lbl_tf(lbl)
             
         return im, lbl
 
