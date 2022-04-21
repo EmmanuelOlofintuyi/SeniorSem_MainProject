@@ -165,32 +165,30 @@ print(class_names)
 ##to view the images trans
 import torchvision
 import matplotlib.pyplot as plt
-def imshow(image):
-  if  isinstance(image, torch.Tensor):
-    image =image.nuppy().transpose((1,2,0))
-  else:
-        image = np.array(image).transpose((1,2,0))
+if  isinstance(im, torch.Tensor):
+    image =im.nuppy().transpose((1,2,0))
+else:
+        image = np.array(im).transpose((1,2,0))
         #Unnormalize 
         mean = np.array([0.485,0.456,0.406])
         std = np.array([0.229, 0.224, 0.225])
         image = std +image + mean
         image = np.clip(image,0,1)
-        plt.imshow(image)
         ##ax.axiz('off')
 
-images, _=next(iter(dataloaders['training']))
+images, _=next(iter(dataLoader['training']))
 out = torchvision.utils.make_grid(images, nrow=8)
 
-#choosing the model
-model = models.resnet50(pretrained=False)
+num_ftrs = MyModel.fc.in_features
+MyModel.fc = nn.Linear(num_ftrs, 102)
 
-num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 102)
 
-for param in model.parameters():
+
+
+for param in MyModel.parameters():
   param.requires_grad = True
 
-model.cuda()
+Mymodel.cuda()
 
 ##def train_model(model, criteria, optimizer, scheduler,
               ##  num_epochs = 40, device= cuda)
@@ -230,21 +228,23 @@ model.cuda()
                       ##epoch_loss = running_loss / dataset_sizes[phase]
                       ##epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-                  learning_rate = .0001
-                  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-                  model = MyModel()
-                  model = model.to(device)
-                  criterion = nn.CrossEntropyLoss()
-                  optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-                  for epoch in range(num_epochs):
-                       train_running_loss = 0.0
-                       train_acc = 0.0
+                  def trainmodel():
+  learning_rate = .0001
+  num_epochs = 32
+  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+  model = MyModel()
+  model = MyModel.to(device)
+  criterion = nn.CrossEntropyLoss()
+  optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+  for epoch in range(num_epochs):
+      train_running_loss = 0.0
+      train_acc = 0.0
  
-                  model = model.train()
- 
- 
+      model = model.train_model() 
+
                  ##Make sure returning and training code match
-                  for i, (images, labels) in enumerate(trainloader):
+      
+      for i, (images, labels) in enumerate(dataLoader):
         
                     images = images.to(device)
                     labels = labels.to(device)
@@ -261,13 +261,12 @@ model.cuda()
                     optimizer.step()
 
                     writer.flush()
+                    writer.close()
 
-                  #ALANDA is confused with this part. 
-                  train_running_loss += loss.detach().item()
-                  
+                    train_running_loss += loss.detach().item()                  
 
                   ## model.eval()
-                  print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
+                    print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
                   %(epoch, train_running_loss / i, train_acc/i))  
 
 #Saving the model
