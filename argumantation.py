@@ -1,5 +1,5 @@
 'training' : transforms.Compose([
-        transforms.RandomRotation(-35,35),
+        transforms.RandomRotation(35,35),
         transforms.RandomVerticalFlip(p=1.0)
         //transforms.Grayscale(num_output_channels=1)
         transforms.ToTensor(),
