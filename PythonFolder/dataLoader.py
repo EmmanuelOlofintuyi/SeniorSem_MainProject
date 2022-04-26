@@ -1,79 +1,110 @@
-import os
-from os.path import join as pjoin
-import collections
-import json
+from numpy.lib.type_check import imag
 import torch
-import numpy as np
-import scipy.misc as m
-import scipy.io as io
-import matplotlib.pyplot as plt
-import glob
-
+import torch.nn as nn
 from PIL import Image
-from tqdm import tqdm
-from torch.utils import data
-from torchvision import transforms
+from torch.autograd import Variable
+from torch.utils.tensorboard import SummaryWriter
+from torchvision.datasets import VOCSegmentation
+import torch.nn.functional as F
+import torchvision
+import torchvision.transforms as transforms
+import sklearn.model_selection as model_selection
+from torchvision import transforms, models, datasets
+from torch.utils.data import DataLoader
+import glob
+import os
+from torchvision.models.segmentation import fcn_resnet50
+from dataLoader import VocLoader
+from keras.applications.resnet import ResNet50
+
+BATCH_SIZE = 8
+
+MyModel = models.segmentation.fcn_resnet50(pretrained=False)
+train_set = VocLoader('/content/drive/MyDrive/SeniorSeminar/VOCdevkit/VOC2012/', split= "train")
+train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle =True)
+
+def trainmodel():
+  writer = SummaryWriter()
+  learning_rate = .0001
+  num_epochs = 32
+  num = 0
+  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+  ##model = MyModel()
+  model = MyModel.to(device)
+  criterion = nn.CrossEntropyLoss(ignore_index = 255)
+  optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+  for epoch in range(num_epochs):
+      train_running_loss = 0.0
+      train_acc = 0.0
+ 
+      #model = model.trainmodel() 
+
+                 ##Make sure returning and training code match
+      for phase in ['train', 'val']:
+        if phase == 'train':
+           model.train()  # Set model to training mode
+        else:
+           model.eval()   # Set model to evaluate mode
+        running_loss = 0.0
+        running_corrects = 0
+        for samples, (images, labels) in enumerate(train_loader):
+          num = num + 1
+          print(num)
+          im = images.to(device)
+          labels = labels.to(device)
+          im = im.type(torch.cuda.FloatTensor)
+          labels =labels.type(torch.cuda.LongTensor)
+          ##logits = model(im)
+          
+          with torch.set_grad_enabled(phase == 'train'):
+            outputs = model(im)['out']
+            
+            predictions =  torch.argmax(outputs, 1)
+            loss = criterion(outputs, labels)
+
+            if phase == 'train':
+              optimizer.zero_grad()
+              loss.backward()
+              optimizer.step()
+
+            train_running_loss += loss.item()
+            running_loss += loss.item()
+            result = (predictions == labels)
+            train_acc += torch.sum(result)
+          ##loss = criterion(logits, labels)
+
+          #(-_-) 
+          
+          
+          ##optimizer.zero_grad()
+          ##loss.backward()
+          ##optimizer.step()
+
+          
+
+          ##train_running_loss += loss.detach().item()                  
+
+        #model.eval()
+        writer.add_scalar("Loss/train", loss, epoch)
+        
+        print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
+      %(epoch, train_running_loss / samples, train_acc/ samples))
+
+  for i, (images, labels) in enumerate(train_loader):
+    im = images.to(device)
+    labels = labels.to(device)
+
+  images, _=next(iter(VocLoader['training']))
+  out = torchvision.utils.make_grid(images, nrow=8)
+  writer.flush()
+  writer.close()
+trainmodel()
+torch.save(MyModel.state_dict(), '/content/drive/MyDrive/SeniorSeminar')
 
 
-class VocLoader(data.Dataset):
+
+  
 
 
-    def __init__(
-        self,
-        root,
-        split="train",
-        img_size=512,
-       
-    ):
-        self.root = root
-        self.split = split
-        self.n_classes = 21
-         
-        path = pjoin(self.root, "ImageSets/Segmentation", split + ".txt")
-        def get_list_filenames(filename_text_path):
-          f = open(filename_text_path)
-          list_filenames = []
-          for x in f:
-              fileName = x.strip('\n') + '.jpg'
-              list_filenames.append(fileName)
-          return list_filenames
-        self.files = get_list_filenames(path)       
-        print(self.files)
-        self.tf = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.CenterCrop(512),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ])
-        self.lbl_tf = transforms.Compose (
-            [
-                transforms.CenterCrop(512)
-            ]
-        )
 
-    def __len__(self):
-        return len(self.files)
 
-    def __getitem__(self, index):
-        im_name = self.files[index]
-        im_path = pjoin(self.root, "JPEGImages", im_name + ".jpg")
-        lbl_path = pjoin(self.root, "/content/gdrive/MyDrive/SeniorSeminar/VOCdevkit/VOC2012/SegmentationClass", im_name + ".png")
-        im = Image.open(im_path)
-        lbl = np.array(Image.open(lbl_path))
-       
-        im = self.tf(im)
-        lbl = self.lbl_tf(lbl)
-           
-        return im, lbl
-
-   
-   
-       
-    def get_JPEGimages(image_folder_path):
-        files = glob.glob(image_folder_path + '/*.jpg')
-        JPEG_file_dictionary = {}
-        for f in files:
-            name = os.path.basename(f)
-            jpg_file = open(f)
-            JPEG_file_dictionary.update({name:jpg_file})
-   
