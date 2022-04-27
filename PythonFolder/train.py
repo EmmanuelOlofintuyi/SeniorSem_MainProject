@@ -24,7 +24,7 @@ train_set = VocLoader('/content/drive/MyDrive/SeniorSeminar/VOCdevkit/VOC2012/',
 train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle =True)
 
 def trainmodel():
-  writer = SummaryWriter()
+  writer = SummaryWriter('runs/VocSegmentation')
   learning_rate = .0001
   num_epochs = 32
   num = 0
@@ -94,12 +94,21 @@ def trainmodel():
     im = images.to(device)
     labels = labels.to(device)
 
-  images, _=next(iter(VocLoader['training']))
+  images, _=next(iter(VocLoader('training')))
   out = torchvision.utils.make_grid(images, nrow=8)
   writer.flush()
   writer.close()
 trainmodel()
-torch.save(MyModel.state_dict(), '/content/drive/MyDrive/SeniorSeminar')
+torch.save(MyModel.state_dict(), '/content/drive/MyDrive/SeniorSeminar/model/model.pt')
+
+
+
+  
+
+
+
+
+
 
 
 
